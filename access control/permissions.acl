@@ -13,40 +13,17 @@
  */
 
 /**
- * Sample access control list for decentralized booking.
+ * Sample access control list for decentralized voting.
  */
-
-rule BookableObjectHolderCanNotManageParticipants {
-    description: "Members of the BookableObjectHolder roles can not manage participants"
-    participant: "org.booking.model.BookableObjectHolder"
-    operation: CREATE, UPDATE, DELETE
-    resource: "org.booking.model.BookableObjectHolder"
-    action: DENY
-}
-
-rule HotelCanOnlyCreate {
-    description: "Members of the Hotel roles can only create and read asset"
-    participant: "org.booking.model.Hotel"
-    operation: UPDATE, DELETE
-    resource: "org.booking.model.BookableObject"
-    action: DENY
-}
-
-rule EndSuerCanNotCreate {
-    description: "Members of the Hotel roles can only create and read asset"
-    participant: "org.booking.model.EndUser"
-    operation: CREATE
-    resource: "org.booking.model.BookableObject"
-    action: DENY
-}
-
 rule EverybodyCanDoEverything {
-    description: "Default test rule everybody can do anything"
+    description: "Everybody can do everything"
     participant: "**"
     operation: ALL
     resource: "**"
     action: ALLOW
 }
+
+
 
 
 
