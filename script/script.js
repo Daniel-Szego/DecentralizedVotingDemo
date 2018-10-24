@@ -32,6 +32,25 @@ async function CreateTestDataTransaction(param) {
     const votingRoundReg = await getAssetRegistry(namespace + '.VotingRound');   
     const votingRound = await factory.newResource(namespace, 'VotingRound', "1");
     votingRound.votingStates = "INITIATED";
+    votingRound.valueOfVote = new Array();
+      
+    const possibleVoteValue1 = await factory.newConcept(namespace, 'ValueOfVote');  
+	possibleVoteValue1.value = 1;
+	possibleVoteValue1.valueSecription = "First choice";
+	possibleVoteValue1.votes = 0;
+  	votingRound.valueOfVote.push(possibleVoteValue1); 
+
+    const possibleVoteValue2 = await factory.newConcept(namespace, 'ValueOfVote');  
+	possibleVoteValue2.value = 2;
+	possibleVoteValue2.valueSecription = "Second choice";
+	possibleVoteValue2.votes = 0;
+  	votingRound.valueOfVote.push(possibleVoteValue2); 
+
+    const possibleVoteValue3 = await factory.newConcept(namespace, 'ValueOfVote');  
+	possibleVoteValue3.value = 3;
+	possibleVoteValue3.valueSecription = "Third choice";
+	possibleVoteValue3.votes = 0;
+  	votingRound.valueOfVote.push(possibleVoteValue3); 
   
     await votingRoundReg.add(votingRound);       
 
@@ -155,6 +174,13 @@ async function VoteTransaction(param) {
  * @transaction
  */
 async function RevealVoteTransaction(param) {  
+  const vote = param.vote;
+  const voteValue = param.voteValue;
+  const salt = param.salt;
+
+  
+  
+  
 }
 
 

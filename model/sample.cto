@@ -28,10 +28,18 @@ enum VotingStates{
   o CLOSED
 }
 
+concept ValueOfVote {
+  o Integer value
+  o String valueSecription
+  o Integer votes
+}
+
 asset VotingRound identified by votingRoundId {
   o String votingRoundId
   o VotingStates votingStates
+  o ValueOfVote[] valueOfVote
   o Integer votingResult optional
+  o Integer votingResultDescription optional
 }
 
 asset Vote identified by voteId {
@@ -80,8 +88,8 @@ transaction VoteTransaction {
 }
 
 transaction RevealVoteTransaction {
-  o Voter voter
-  o Integer vote 
+  o Vote vote
+  o Integer voteValue 
   o String salt 
 }
 
