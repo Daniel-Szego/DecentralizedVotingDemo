@@ -31,7 +31,7 @@ enum VotingStates{
 asset VotingRound identified by votingRoundId {
   o String votingRoundId
   o VotingStates votingStates
-  o Integer votingResult
+  o Integer votingResult optional
 }
 
 asset Vote identified by voteId {

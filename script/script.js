@@ -22,6 +22,43 @@ var namespace = "org.decentralizedvoting.model";
  * @transaction
  */
 async function CreateTestDataTransaction(param) {  
+  
+    console.log('init test data');
+	
+    console.log('Creating a votinground and two voters');  
+    const factory = getFactory(); 
+	
+  	// adding a Voting round
+    const votingRoundReg = await getAssetRegistry(namespace + '.VotingRound');   
+    const votingRound = await factory.newResource(namespace, 'VotingRound', "1");
+    votingRound.votingStates = "INITIATED";
+  
+    await votingRoundReg.add(votingRound);       
+
+  	// adding a Voter 1
+    const voterReg = await getParticipantRegistry(namespace + '.Voter');   
+    const voter = await factory.newResource(namespace, 'Voter', "1");
+    voter.firstName = "John";
+    voter.lastName = "Rambo";
+  
+    await voterReg.add(voter);       
+
+    // adding a Voter 2
+    const voter2 = await factory.newResource(namespace, 'Voter', "2");
+    voter2.firstName = "Chuck";
+    voter2.lastName = "Norris";
+  
+    await voterReg.add(voter2);       
+
+  	// adding an Admin
+    const adminReg = await getParticipantRegistry(namespace + '.Admin');   
+    const admin = await factory.newResource(namespace, 'Admin', "1");
+  
+    await adminReg.add(admin);       
+  
+
+    console.log('init test data finished');
+
 }
 
 /**
@@ -30,6 +67,26 @@ async function CreateTestDataTransaction(param) {
  * @transaction
  */
 async function ClearDataTransaction(param) {  
+    console.log('clearing test data');
+
+    // deleting assets
+    const votingRoundReg = await getAssetRegistry(namespace + '.VotingRound'); 
+    let VotingRounds = await votingRoundReg.getAll();
+    await votingRoundReg.removeAll(VotingRounds);
+  
+    const voteReg = await getAssetRegistry(namespace + '.Vote'); 
+    let votes = await voteReg.getAll();
+    await voteReg.removeAll(votes);
+  
+  	// deleting participants
+    const voterReg = await getParticipantRegistry(namespace + '.Voter');
+    let voters = await voterReg.getAll();
+    await voterReg.removeAll(voters);
+    
+    const adminReg = await getParticipantRegistry(namespace + '.Admin');
+    let admins = await adminReg.getAll();
+    await adminReg.removeAll(admins);
+  
 }
 
 /**
@@ -63,4 +120,6 @@ async function VoteTransaction(param) {
  */
 async function RevealVoteTransaction(param) {  
 }
+
+
 
