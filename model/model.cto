@@ -42,9 +42,15 @@ asset VotingRound identified by votingRoundId {
   o Integer votingResultDescription optional
 }
 
+enum VoteState {
+  o VOTED
+  o REVEALED
+}
+
 asset Vote identified by voteId {
   o String voteId
   o String hash
+  o VoteState voteSate
   --> VotingRound votingRound
   --> Voter voter
 }
@@ -88,7 +94,7 @@ transaction VoteTransaction {
 }
 
 transaction RevealVoteTransaction {
-  o Vote vote
+  --> Vote vote
   o Integer voteValue 
   o String salt 
 }

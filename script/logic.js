@@ -179,6 +179,7 @@ async function VoteTransaction(param) {
   vote.votingRound = votingRound;
   vote.hash = hash;
   vote.voter = voter;
+  vote.voteSate = "VOTED";
     
   await voteReg.add(vote);       
 
@@ -193,6 +194,7 @@ async function RevealVoteTransaction(param) {
   const vote = param.vote;
   const voteValue = param.voteValue;
   const salt = param.salt;
+  const votingRound = vote.votingRound;
  
   // State check
   // Reveal can be done only in voting state
@@ -200,18 +202,28 @@ async function RevealVoteTransaction(param) {
   	 throw new Error("Reveal can be started only in calculating state");
   }
 
+  // Reveal can be done only in voting state
+  if (vote.voteSate != "VOTED") {
+  	 throw new Error("Votes can be revealed only once");
+  }
+  
   let calculatedhash = sha256(voteValue.toString() + salt);
   
   if (calculatedhash != vote.hash) {
   	throw new Error("Incorrect hash");
   }
   
-  const votingRoundReg = await getAssetRegistry(namespace + '.VotingRound'); 
-  const votingRound = vote.votingRound;
-  votingRound.valueOfVote[voteValue] =  votingRound.valueOfVote[voteValue] + 1;
+  const votingRoundReg = await getAssetRegistry(namespace + '.VotingRound');
+  votingRound.valueOfVote[voteValue].votes = votingRound.valueOfVote[voteValue].votes + 1;
   votingRoundReg.update(votingRound);
- 
+
+  const votingReg = await getAssetRegistry(namespace + '.Vote');
+  vote.voteSate = "REVEALED";
+  votingReg.update(vote); 
 }
+
+
+
 
 
 
