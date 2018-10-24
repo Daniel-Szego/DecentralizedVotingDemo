@@ -117,7 +117,15 @@ async function StartVotingTransaction(param) {
   const factory = getFactory(); 
   
   let votingRound = param.votingRound;
-   
+  console.log("State:");
+  console.log(votingRound.votingStates);
+  
+    // State check
+  // actual state not initialized -> error
+  if (!(votingRound.votingStates == "INITIATED")) {
+  	 throw new Error("start voting can be executed only in initiated state");
+  } 
+  
   const votingRoundReg = await getAssetRegistry(namespace + '.VotingRound'); 
   votingRound.votingStates = "VOTING";
   votingRoundReg.update(votingRound);
@@ -147,6 +155,14 @@ async function VoteTransaction(param) {
   let votingRound = param.votingRound;
   let voter = param.voter;
   let hash = param.hash;
+  
+  
+  // State check
+  // Voting can be done only in voting state
+  if (votingRound.votingStates != "VOTING") {
+  	 throw new Error("Voting can be done only in voting state");
+  }
+
  
   const voteReg = await getAssetRegistry(namespace + '.Vote');   
 
@@ -177,11 +193,28 @@ async function RevealVoteTransaction(param) {
   const vote = param.vote;
   const voteValue = param.voteValue;
   const salt = param.salt;
+ 
+  // State check
+  // Reveal can be done only in voting state
+  if (votingRound.votingStates != "CALCULATING") {
+  	 throw new Error("Reveal can be started only in calculating state");
+  }
 
+  let calculatedhash = sha256(voteValue.toString() + salt);
   
+  if (calculatedhash != vote.hash) {
+  	throw new Error("Incorrect hash");
+  }
   
-  
+  const votingRoundReg = await getAssetRegistry(namespace + '.VotingRound'); 
+  const votingRound = vote.votingRound;
+  votingRound.valueOfVote[voteValue] =  votingRound.valueOfVote[voteValue] + 1;
+  votingRoundReg.update(votingRound);
+ 
 }
+
+
+
 
 
 
