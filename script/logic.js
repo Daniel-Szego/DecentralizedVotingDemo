@@ -144,6 +144,7 @@ async function StartVotingTransaction(param) {
  */
 async function CalculateVotesTransaction(param) {  
   const votingRound = param.votingRound;
+  const factory = getFactory(); 
   
   // calculating bigges voted
   var biggestNumVote = 0;  
@@ -250,5 +251,10 @@ async function RevealVoteTransaction(param) {
   vote.voteSate = "REVEALED";
   votingReg.update(vote); 
 }
+
+
+
+
+
 
 
