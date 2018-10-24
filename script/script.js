@@ -124,6 +124,29 @@ async function CalculateVotesTransaction(param) {
  * @transaction
  */
 async function VoteTransaction(param) {  
+  const factory = getFactory(); 
+  let votingRound = param.votingRound;
+  let voter = param.voter;
+  let hash = param.hash;
+ 
+  const voteReg = await getAssetRegistry(namespace + '.Vote');   
+
+  // getting max votes
+  let existingVotes = await voteReg.getAll();
+  let numberOfVotes = 0;
+  
+  await existingVotes.forEach(function (vote) {
+    numberOfVotes ++;
+  });
+  numberOfVotes ++; 	
+  
+  const vote = await factory.newResource(namespace, 'Vote', numberOfVotes.toString());
+  vote.votingRound = votingRound;
+  vote.hash = hash;
+  vote.voter = voter;
+    
+  await voteReg.add(vote);       
+
 }
 
 /**

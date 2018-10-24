@@ -38,6 +38,7 @@ asset Vote identified by voteId {
   o String voteId
   o String hash
   --> VotingRound votingRound
+  --> Voter voter
 }
 
 /**
@@ -73,7 +74,8 @@ transaction CalculateVotesTransaction {
 }
 
 transaction VoteTransaction {
-  o Voter voter
+  --> VotingRound votingRound
+  --> Voter voter
   o String hash 
 }
 
