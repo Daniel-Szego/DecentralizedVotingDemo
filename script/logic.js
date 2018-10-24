@@ -143,6 +143,35 @@ async function StartVotingTransaction(param) {
  * @transaction
  */
 async function CalculateVotesTransaction(param) {  
+  const votingRound = param.votingRound;
+  
+  // calculating bigges voted
+  var biggestNumVote = 0;  
+  var elementWithBiggestVote = 0;
+  var relatedDescription = "";
+  for (i=0; i < votingRound.valueOfVote.length; i ++) {
+   		if (biggestNumVote < votingRound.valueOfVote[i].votes) {
+            biggestNumVote = votingRound.valueOfVote[i].votes;
+            relatedDescription = votingRound.valueOfVote[i].valueSecription;
+            elementWithBiggestVote = votingRound.valueOfVote[i].value;
+        }
+  }
+  
+  // updating result
+  const votingRoundReg = await getAssetRegistry(namespace + '.VotingRound'); 
+  votingRound.votingStates = "CLOSED";
+  votingRound.votingResult = elementWithBiggestVote;
+  votingRound.votingResultDescription = relatedDescription;
+  
+  votingRoundReg.update(votingRound);  
+  
+  // emitting VotingFinishedEvent event
+
+  let votingFinishedEvent = factory.newEvent(namespace, 'VotingFinishedEvent');
+  votingFinishedEvent.votingRound = votingRound;
+  votingFinishedEvent.result = elementWithBiggestVote;
+  await emit(votingFinishedEvent);  
+  
 }
 
 /**
@@ -221,12 +250,5 @@ async function RevealVoteTransaction(param) {
   vote.voteSate = "REVEALED";
   votingReg.update(vote); 
 }
-
-
-
-
-
-
-
 
 

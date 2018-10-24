@@ -39,7 +39,7 @@ asset VotingRound identified by votingRoundId {
   o VotingStates votingStates
   o ValueOfVote[] valueOfVote
   o Integer votingResult optional
-  o Integer votingResultDescription optional
+  o String votingResultDescription optional
 }
 
 enum VoteState {
@@ -84,7 +84,7 @@ transaction StartVotingTransaction {
 }
 
 transaction CalculateVotesTransaction {
-    --> VotingRound votingRound
+  --> VotingRound votingRound
 }
 
 transaction VoteTransaction {
