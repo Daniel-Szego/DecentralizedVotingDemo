@@ -13,110 +13,85 @@
  */
 
 /**
- * Sample business network definition for the booking domain.
+ * Simple blind voting algorithm, voting values are simple integers
  */
-
-namespace org.booking.model
+namespace org.decentralizedvoting.model
 
 /**
  * ASSETS
  */
 
-abstract asset BookableObject identified by bookableId {
-  o String bookableId
-  o DateTime date
+enum VotingStates{
+  o INITIATED
+  o VOTING
+  o CALCULATING
+  o CLOSED
 }
 
-enum RoomType {
-  o SIMPLE
-  o DELUXE
-  o KING
+asset VotingRound identified by votingRoundId {
+  o String votingRoundId
+  o VotingStates votingStates
+  o Integer votingResult
 }
 
-enum RoomStatus {
-  o FREE
-  o RESEREVED
-}
-
-asset Room extends BookableObject {
-  o Integer numberOfPeople
-  o Integer numberOfBeds
-  o RoomType roomType
-  o RoomStatus roomStatus
-  --> Hotel hotel
-  --> EndUser endUser optional
+asset Vote identified by voteId {
+  o String voteId
+  o String hash
+  --> VotingRound votingRound
 }
 
 /**
  * PARTICIPANTS
  */
 
-concept Address {
-  o String country
-  o String city optional
-  o String street optional
-  o Integer hauseNr optional
+participant Voter identified by voterId {
+  o String voterId
+  o String firstName
+  o String lastName
 }
 
-abstract participant BookableObjectHolder identified by holderId {
-  o String holderId
-}
-
-participant Hotel extends BookableObjectHolder {
-  o String hotelName
-  o Address address
-}
-
-participant EndUser identified by userId {
-  o String userId
-  o String UserName
+participant Admin identified by adminId {
+  o String adminId
 }
 
 /**
  * TRANSACTIONS
  */
 
-transaction InitTestData {
+transaction CreateTestDataTransaction {
 }
 
-transaction ClearData {
+transaction ClearDataTransaction {
 }
 
-
-transaction IssueHotelRoom {
-  --> Hotel hotel
-  o Integer numberOfPeople
-  o Integer numberOfBeds
-  o RoomType roomType
-  o RoomStatus roomStatus
-  o String dateString
+transaction StartVotingTransaction {
+  --> VotingRound votingRound
 }
 
-transaction ReserveRoom {
-  --> Room room
-  --> EndUser me
+transaction CalculateVotesTransaction {
+    --> VotingRound votingRound
 }
 
-transaction TransferRoom {
-  --> Room room
-  --> EndUser to 
+transaction VoteTransaction {
+  o Voter voter
+  o String hash 
+}
+
+transaction RevealVoteTransaction {
+  o Voter voter
+  o Integer vote 
+  o String salt 
 }
 
 /**
  * EVENTS
  */
 
-event ObjectIssued {
-  --> BookableObject object
-  --> BookableObjectHolder objectHolder
+event VotingStartedEvent {
+  --> VotingRound votingRound
 }
 
-event ObjectReservered {
-  --> BookableObject object
+event VotingFinishedEvent {
+  --> VotingRound votingRound
+  o Integer result
 }
-
-event ObjectTransferred {
-  --> BookableObject object
-  --> EndUser to 
-}
-
