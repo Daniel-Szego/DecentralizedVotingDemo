@@ -1,0 +1,122 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * Sample business network definition for the booking domain.
+ */
+
+namespace org.booking.model
+
+/**
+ * ASSETS
+ */
+
+abstract asset BookableObject identified by bookableId {
+  o String bookableId
+  o DateTime date
+}
+
+enum RoomType {
+  o SIMPLE
+  o DELUXE
+  o KING
+}
+
+enum RoomStatus {
+  o FREE
+  o RESEREVED
+}
+
+asset Room extends BookableObject {
+  o Integer numberOfPeople
+  o Integer numberOfBeds
+  o RoomType roomType
+  o RoomStatus roomStatus
+  --> Hotel hotel
+  --> EndUser endUser optional
+}
+
+/**
+ * PARTICIPANTS
+ */
+
+concept Address {
+  o String country
+  o String city optional
+  o String street optional
+  o Integer hauseNr optional
+}
+
+abstract participant BookableObjectHolder identified by holderId {
+  o String holderId
+}
+
+participant Hotel extends BookableObjectHolder {
+  o String hotelName
+  o Address address
+}
+
+participant EndUser identified by userId {
+  o String userId
+  o String UserName
+}
+
+/**
+ * TRANSACTIONS
+ */
+
+transaction InitTestData {
+}
+
+transaction ClearData {
+}
+
+
+transaction IssueHotelRoom {
+  --> Hotel hotel
+  o Integer numberOfPeople
+  o Integer numberOfBeds
+  o RoomType roomType
+  o RoomStatus roomStatus
+  o String dateString
+}
+
+transaction ReserveRoom {
+  --> Room room
+  --> EndUser me
+}
+
+transaction TransferRoom {
+  --> Room room
+  --> EndUser to 
+}
+
+/**
+ * EVENTS
+ */
+
+event ObjectIssued {
+  --> BookableObject object
+  --> BookableObjectHolder objectHolder
+}
+
+event ObjectReservered {
+  --> BookableObject object
+}
+
+event ObjectTransferred {
+  --> BookableObject object
+  --> EndUser to 
+}
+
