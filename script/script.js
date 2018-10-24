@@ -94,7 +94,20 @@ async function ClearDataTransaction(param) {
  * @param {org.decentralizedvoting.model.StartVotingTransaction} param The sample transaction instance.
  * @transaction
  */
-async function StartVotingTransaction(param) {  
+async function StartVotingTransaction(param) { 
+  const factory = getFactory(); 
+  
+  let votingRound = param.votingRound;
+   
+  const votingRoundReg = await getAssetRegistry(namespace + '.VotingRound'); 
+  votingRound.votingStates = "VOTING";
+  votingRoundReg.update(votingRound);
+   
+  // emitting VotingStartedEvent event
+
+  let votingStartedEvent = factory.newEvent(namespace, 'VotingStartedEvent');
+  votingStartedEvent.votingRound = votingRound;
+  await emit(votingStartedEvent);  	   
 }
 
 /**
